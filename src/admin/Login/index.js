@@ -12,11 +12,20 @@ class LoginPage extends Component {
     };
   }
   handleSubmit () {
+    const { history } = this.props
     let data = {
       username: this.state.username,
       password: this.state.password
     }
-    fetchToken(data)
+    fetchToken(data).then(res => {
+      console.log(res)
+      if (res.data.status === 200) {
+        alert(res.data.message)
+        history.push('/index')
+      } else {
+        alert(res.data.message)
+      }
+    })
   }
   handleUserNameChange(event) {
     this.setState({username: event.target.value});
