@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './index.less'
 import { fetchToken } from '../../api/login.js';
 import logo from '../../logo.svg';
-
 class LoginPage extends Component {
   constructor(props) {
     super(props);
@@ -15,10 +14,9 @@ class LoginPage extends Component {
     const { history } = this.props
     let data = {
       username: this.state.username,
-      password: this.state.password
+      password: window.btoa(this.state.password)
     }
     fetchToken(data).then(res => {
-      console.log(res)
       if (res.data.status === 200) {
         alert(res.data.message)
         history.push('/index')
@@ -27,11 +25,18 @@ class LoginPage extends Component {
       }
     })
   }
-  handleUserNameChange(event) {
-    this.setState({username: event.target.value});
+  handleChange (event) {
+    let target = event.target
+    let name = target.name
+    const value = target.type === 'checkbox' ? target.checked : target.value
+    this.setState({
+      [name]: value
+    })
   }
-  handlePasswordChange(event) {
-    this.setState({password: event.target.value});
+  handleKeyDown (event) {
+    if (event.keyCode === 13) {
+      this.handleSubmit()
+    }
   }
   render () {
     return (
@@ -44,9 +49,16 @@ class LoginPage extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <input className="username" type="text" placeholder="用户名" value={this.state.value} onChange={this.handleUserNameChange.bind(this)}/>
-        <input className="password" type="password" placeholder="密码" value={this.state.value} onChange={this.handlePasswordChange.bind(this)}/>
-        <button className="submit-btn" onClick={this.handleSubmit.bind(this)}>登录</button>
+        <input name="username" tabIndex="1" className="username" type="text" placeholder="用户名" onChange={this.handleChange.bind(this)}/>
+        <input
+          name="password" 
+          onKeyDown={this.handleKeyDown.bind(this)}
+          tabIndex="2" 
+          className="password" 
+          type="password" 
+          placeholder="密码" 
+          onChange={this.handleChange.bind(this)}/>
+        <button tabIndex="3" className="submit-btn" onClick={this.handleSubmit.bind(this)}>登录</button>
       </div>
       </div>
     )
